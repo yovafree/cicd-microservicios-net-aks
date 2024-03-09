@@ -1,0 +1,40 @@
+version: '3.4'
+
+networks:
+  orders:
+    name: orders-network
+    
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - orders
+  sql_server:
+    container_name: sql_server
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - SA_PASSWORD=_SqLr0ck_
+      - ACCEPT_EULA=Y
+    ports:
+      - 1433:1433
+    networks:
+      - orders
+  jaeger:
+    image: jaegertracing/all-in-one
+    container_name: jaeger
+    hostname: jaeger
+    restart: unless-stopped
+    ports:
+      - 5775:5775/udp
+      - 5778:5778
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 9411:9411
+      - 14268:14268
+      - 16686:16686
+    networks:
+      - orders

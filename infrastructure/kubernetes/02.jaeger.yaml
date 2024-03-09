@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-svc
+  labels:
+    app: jaeger-app
+spec:
+  ports:
+  - port: 5775
+    targetPort: 5775
+    name: service-port1
+  - port: 5778
+    targetPort: 5778
+    name: service-port2
+  - port: 6831
+    targetPort: 6831
+    name: service-port3
+  - port: 6832
+    targetPort: 6832
+    name: service-port4
+  - port: 9411
+    targetPort: 9411
+    name: service-port5
+  - port: 14268
+    targetPort: 14268
+    name: service-port6
+  - port: 16686
+    targetPort: 16686
+    name: service-port7
+  selector:
+    app: jaeger-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger-deployment
+  labels:
+    app: jaeger-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger-app
+  template:
+    metadata:
+      labels:
+        app: jaeger-app
+    spec:
+      containers:
+      - name: jaeger
+        image: jaegertracing/all-in-one
+        ports:
+        - containerPort: 5775
+          name: service-port1
+        - containerPort: 5778
+          name: service-port2
+        - containerPort: 6831
+          name: service-port3
+        - containerPort: 6832
+          name: service-port4
+        - containerPort: 9411
+          name: service-port5
+        - containerPort: 14268
+          name: service-port6
+        - containerPort: 16686
+        imagePullPolicy: Always

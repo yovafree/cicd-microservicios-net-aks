@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-svc
+  labels:
+    app: payment-app
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: payment-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-deployment
+  labels:
+    app: payment-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-app
+  template:
+    metadata:
+      labels:
+        app: payment-app
+    spec:
+      containers:
+      - name: payment
+        image: yovafree/demo-system-order:payment2.0
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: RabbitMq__Hostname
+          value: "rabbitmq-svc"
+        - name: RabbitMq__QueueName
+          value: "history"
+        - name: RabbitMq__QueueName2
+          value: "messages"
+        - name: RabbitMq__Enabled
+          value: "true"
+        - name: ConnectionStrings__DemoContext
+          value: "Server=sql-data-svc,1433;Database=Ecommerce;user id=SA;password=_SqLr0ck_"
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always

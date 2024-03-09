@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+  labels:
+    app: frontend-app
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: frontend-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: frontend-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-app
+  template:
+    metadata:
+      labels:
+        app: frontend-app
+    spec:
+      containers:
+      - name: frontend
+        image: yovafree/demo-system-order:frontend2.0
+        env:
+        - name: OrdersApiUrl
+          value: "http://order-svc"
+        - name: PaymentsApiUrl
+          value: "http://payment-svc"
+        - name: NotificationsApiUrl
+          value: "http://notification-svc"
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1024Mi
+          requests:
+            cpu: 500m
+            memory: 1024Mi
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+      # nodeSelector:
+      #   kubernetes.io/role: agent
+      #   beta.kubernetes.io/os: linux
+      #   type: virtual-kubelet
+      # tolerations:
+      # - key: virtual-kubelet.io/provider
+      #   operator: Exists
