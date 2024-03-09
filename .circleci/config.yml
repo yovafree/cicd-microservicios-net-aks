@@ -23,10 +23,10 @@ workflows:
         - build:
             filters:
               branches:
-                only: release
-        - deploy:
-            requires:
-              - build
-            filters:
-              branches:
-                only: release
+                only: master
+        # - deploy:
+        #     requires:
+        #       - build
+        #     filters:
+        #       branches:
+        #         only: release
