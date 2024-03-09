@@ -1,0 +1,32 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: docker:18-git
+    working_directory: ~/cicd-microservicios-net-aks
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Crear imagen de docker
+          command: |
+            echo 'Se inicia la compilacion'
+            ls
+            apk add tar
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --pa
+            cd mvcLoans
+            docker build -t yovafree/demo-system-order:frontend3.0 .
+            docker push yovafree/demo-system-order:frontend3.0
+workflows:
+    flujo:
+      jobs:
+        - build:
+            filters:
+              branches:
+                only: release
+        - deploy:
+            requires:
+              - build
+            filters:
+              branches:
+                only: release
