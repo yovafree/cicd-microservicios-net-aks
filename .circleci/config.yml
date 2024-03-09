@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: docker:18-git
-    working_directory: ~/cicd-microservicios-net-aks
+    working_directory: ~/cicd-microservicios-net-aks/demo1/Frontend
     steps:
       - checkout
       - setup_remote_docker
